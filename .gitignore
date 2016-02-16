@@ -1,0 +1,13 @@
+.DS_Store
+Desktop.ini
+._*
+Thumbs.db
+*.swp
+*.swo
+.idea
+.Spotlight-V100
+.Trashes
+vendor
+composer.lock
+coverage
+/test.php

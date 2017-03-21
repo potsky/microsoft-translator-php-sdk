@@ -1,3 +1,7 @@
+#### Existing Azure subscriptions will be retired and cancelled starting 3/31/2017. New microsoft Azure accounts need a credit card so this extension will not be maintained, sorry for this.
+
+---
+
 # PHP SDK for Microsoft Translator
 
 [![Latest Stable Version](https://poser.pugx.org/potsky/microsoft-translator-php-sdk/v/stable.svg)](https://packagist.org/packages/potsky/microsoft-translator-php-sdk)

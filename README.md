@@ -1,7 +1,3 @@
-#### Existing Azure subscriptions will be retired and cancelled starting 3/31/2017. New microsoft Azure accounts need a credit card so this extension will not be maintained, sorry for this.
-
----
-
 # PHP SDK for Microsoft Translator
 
 [![Latest Stable Version](https://poser.pugx.org/potsky/microsoft-translator-php-sdk/v/stable.svg)](https://packagist.org/packages/potsky/microsoft-translator-php-sdk)
@@ -51,9 +47,24 @@ include_once( 'src/MicrosoftTranslator.php' );
 
 ### 2.1 Microsoft Account
 
-You need to create an account on Microsoft Translation service : <https://datamarket.azure.com/dataset/bing/microsofttranslator>.
+1. Sign up for a Microsoft Azure account (credit card required)
 
-Then you need to create an application to get a `client_id` and a `client_secret` : <https://datamarket.azure.com/developer/applications>
+	If you don’t already have an Azure account, sign up for a Microsoft Azure account at <http://azure.com>.
+	
+2. After you have created an Azure account, subscribe to Azure. You will not be charged for Azure unless you use it. Then sign into the Azure portal at <http://portal.azure.com>.
+
+3. Add a Microsoft Translator API subscription to your Azure account.
+
+	- Select the *+ New* option
+	- Select *AI + Cognitive Services* from the list of Azure services
+	- Select either *Translator Text API*
+	- Press the *Create* button when you’re ready to create your Microsoft Translator API subscription.
+	- Complete the fields and press the *Create* button and you’re now subscribed to Microsoft Translator.
+	
+4. Retrieve your authentication key.
+
+	- Go to *All Resources* and select the *Microsoft Translator API* subscription account you are subscribed to.
+	- Select the *Keys* option and copy the first subscription key to access the service.
 
 ### 2.2 SDK
 
@@ -67,10 +78,8 @@ Here is the list of available parameters, some are mandatory:
 
 |Name|Default|Description|
 |----|----|----|
-|`api_client_id`|**mandatory**|Your OAuth client ID|
-|`api_client_secret`|**mandatory**|Your OAuth client secret|
-|`api_client_scope`|`http://api.microsofttranslator.com`| |
-|`api_access_token`|-|You can directly give an access token. In this case `api_client_id` and `api_client_secret` will not be used|
+|`api_client_key`|**mandatory**|Your subscription key 1|
+|`api_access_token`|-|You can directly give an access token. In this case `api_client_key` will not be used but this token longs only 10 minutes according to the microsoft documentation|
 |`api_base_url`|`http://api.microsofttranslator.com/V2/Http.svc/`| |
 |`auth_base_url`|`https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/`| |
 |`guard_type`|`file`|The only available type is `file` but you can specify your own Guard by setting the classname like this `YourNameSpace\\YourGuardWhichImplementsTheMicrosoftTranslatorGuardInterface`|
@@ -98,8 +107,7 @@ include 'src/MicrosoftTranslator.php';
 
 $msTranslator = new \MicrosoftTranslator\Client( array(
 	'log_level'         => \MicrosoftTranslator\Logger::LEVEL_DEBUG ,
-	'api_client_id'     => 'your-client-id' ,
-	'api_client_secret' => 'your-client-secret' ,
+	'api_client_key'     => 'your-client-key' ,
 ) );
 ```
 
@@ -373,10 +381,13 @@ $msTranslator->getAuth()->getGuard()->cleanAccessTokens();
 
 ## 4. Change Log
 
+- `v0.0.3`
+    - Switch to Azure API
+    - Add an example ready to use in the `example` directory
 - `v0.0.2`
-    -  The SDK now returns a `MicrosoftTranslator\Exception` when access token cannot be retrieved
+    - The SDK now returns a `MicrosoftTranslator\Exception` when access token cannot be retrieved
 - `v0.0.1`
-    -  here is the beginning
+    - here is the beginning
 
 ## 5. Contribute
 

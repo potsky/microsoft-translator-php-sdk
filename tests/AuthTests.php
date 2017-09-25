@@ -2,120 +2,118 @@
 
 class AuthTests extends TestCase
 {
-	protected $configuration = array(
-		'api_lang'          => 'en' ,
-		'api_client_id'     => 'dumb' ,
-		'api_client_secret' => 'dumber' ,
-	);
+    protected $configuration = [
+        'api_lang'       => 'en',
+        'api_client_key' => 'dumb',
+    ];
 
-	public function testAuthWithDefaultGuard()
-	{
-		$client = new MicrosoftTranslator\Client( array(
-			'api_client_id'     => 'dumb' ,
-			'api_client_secret' => 'dumber' ,
-		) );
+    public function testAuthWithDefaultGuard()
+    {
+        $client = new MicrosoftTranslator\Client([
+            'api_client_key' => 'dumb',
+        ]);
 
-		$auth = $client->getAuth();
+        $auth = $client->getAuth();
 
-		$this->assertInstanceOf( 'MicrosoftTranslator\\Auth' , $auth );
-	}
+        $this->assertInstanceOf('MicrosoftTranslator\\Auth', $auth);
+    }
 
-	public function testAuthWithIncorrectGuard()
-	{
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' , 'Guard Manager is not an instance of MicrosoftTranslator\\GuardInterface' );
+    public function testAuthWithIncorrectGuard()
+    {
+        $this->expectException('\\MicrosoftTranslator\\Exception', 'Guard Manager is not an instance of MicrosoftTranslator\\GuardInterface');
 
-		new MicrosoftTranslator\Client( array(
-			'api_client_id'     => 'dumb' ,
-			'api_client_secret' => 'dumber' ,
-			'guard_type'        => '\\MicrosoftTranslator\\Logger' ,
-		) );
-	}
+        new MicrosoftTranslator\Client([
+            'api_client_key' => 'dumb',
+            'guard_type'     => '\\MicrosoftTranslator\\Logger',
+        ]);
+    }
 
-	public function testGetGuard()
-	{
-		$client = new MicrosoftTranslator\Client( array(
-			'api_client_id'     => 'dumb' ,
-			'api_client_secret' => 'dumber' ,
-		) );
+    public function testGetGuard()
+    {
+        $client = new MicrosoftTranslator\Client([
+            'api_client_key' => 'dumb',
+        ]);
 
-		$this->assertInstanceOf( '\\MicrosoftTranslator\\GuardInterface' , $client->getAuth()->getGuard() );
-	}
+        $this->assertInstanceOf('\\MicrosoftTranslator\\GuardInterface', $client->getAuth()
+                                                                                ->getGuard());
+    }
 
-	public function testGetAccessToken()
-	{
-		$access_token = 'LpL7uAhIz2TyYu8ZWvU62k9v3bbetCs8dxwcluRB';
-		$result = '{
-		  "access_token": "' . $access_token . '",
-		  "token_type": "Bearer",
-		  "expires_in": 3600
-		}';
+    public function testGetAccessToken()
+    {
+        $access_token = 'LpL7uAhIz2TyYu8ZWvU62k9v3bbetCs8dxwcluRB';
+        $result       = $access_token;
 
-		/** @var \Mockery\MockInterface|\MicrosoftTranslator\Http $mockHttp */
-		$mockHttp = \Mockery::mock( '\\MicrosoftTranslator\\Http' , array( $this->configuration , new \MicrosoftTranslator\Logger ) )->makePartial();
-		/** @noinspection PhpMethodParametersCountMismatchInspection */
-		$mockHttp->shouldReceive( 'execCurl' )->andReturn( array( $result , 200 , '' , 0 ) );
+        /** @var \Mockery\MockInterface|\MicrosoftTranslator\Http $mockHttp */
+        $mockHttp = \Mockery::mock('\\MicrosoftTranslator\\Http', [$this->configuration, new \MicrosoftTranslator\Logger])
+                            ->makePartial();
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        $mockHttp->shouldReceive('execCurl')
+                 ->andReturn([$result, 200, '', 0]);
 
-		$auth = new \MicrosoftTranslator\Auth( $this->configuration , new \MicrosoftTranslator\Logger , $mockHttp );
+        $auth = new \MicrosoftTranslator\Auth($this->configuration, new \MicrosoftTranslator\Logger, $mockHttp);
 
-		// compute
-		$auth->getGuard()->deleteAllAccessTokens();
-		$this->assertEquals( $access_token , $auth->getAccessToken() );
+        // compute
+        $auth->getGuard()
+             ->deleteAllAccessTokens();
 
-		// get from cache
-		$this->assertEquals( $access_token , $auth->getAccessToken() );
-	}
+        $this->assertEquals($access_token, $auth->getAccessToken());
 
-	public function testGetAccessTokenWithHttpError()
-	{
-		/** @var \Mockery\MockInterface|\MicrosoftTranslator\Http $mockHttp */
-		$mockHttp = \Mockery::mock( '\\MicrosoftTranslator\\Http' , array( $this->configuration , new \MicrosoftTranslator\Logger ) )->makePartial();
-		/** @noinspection PhpMethodParametersCountMismatchInspection */
-		$mockHttp->shouldReceive( 'execCurl' )->andReturn( array( '' , 500 , '' , 0 ) );
+        // get from cache
+        $this->assertEquals($access_token, $auth->getAccessToken());
+    }
 
-		$auth = new \MicrosoftTranslator\Auth( $this->configuration , new \MicrosoftTranslator\Logger , $mockHttp );
-		$auth->getGuard()->deleteAllAccessTokens();
+    public function testGetAccessTokenWithHttpError()
+    {
+        /** @var \Mockery\MockInterface|\MicrosoftTranslator\Http $mockHttp */
+        $mockHttp = \Mockery::mock('\\MicrosoftTranslator\\Http', [$this->configuration, new \MicrosoftTranslator\Logger])
+                            ->makePartial();
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        $mockHttp->shouldReceive('execCurl')
+                 ->andReturn(['', 500, '', 0]);
 
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' );
-		$auth->getAccessToken();
-	}
+        $auth = new \MicrosoftTranslator\Auth($this->configuration, new \MicrosoftTranslator\Logger, $mockHttp);
+        $auth->getGuard()
+             ->deleteAllAccessTokens();
 
-	public function testGetInvalidAccessToken()
-	{
-		$result = '{
-		  "access_token": {},
-		  "token_type": "Bearer",
-		  "expires_in": 3600
-		}';
+        $this->expectException('\\MicrosoftTranslator\\Exception');
+        $auth->getAccessToken();
+    }
 
-		/** @var \Mockery\MockInterface|\MicrosoftTranslator\Http $mockHttp */
-		$mockHttp = \Mockery::mock( '\\MicrosoftTranslator\\Http' , array( $this->configuration , new \MicrosoftTranslator\Logger ) )->makePartial();
-		/** @noinspection PhpMethodParametersCountMismatchInspection */
-		$mockHttp->shouldReceive( 'execCurl' )->andReturn( array( $result , 200 , '' , 0 ) );
+    public function testGetInvalidAccessToken()
+    {
+        $result = false;
 
-		$auth = new \MicrosoftTranslator\Auth( $this->configuration , new \MicrosoftTranslator\Logger , $mockHttp );
-		$auth->getGuard()->deleteAllAccessTokens();
+        /** @var \Mockery\MockInterface|\MicrosoftTranslator\Http $mockHttp */
+        $mockHttp = \Mockery::mock('\\MicrosoftTranslator\\Http', [$this->configuration, new \MicrosoftTranslator\Logger])
+                            ->makePartial();
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        $mockHttp->shouldReceive('execCurl')
+                 ->andReturn([$result, 200, '', 0]);
 
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' , 'Access token found in response but it is not a string' );
-		$auth->getAccessToken();
-	}
+        $auth = new \MicrosoftTranslator\Auth($this->configuration, new \MicrosoftTranslator\Logger, $mockHttp);
+        $auth->getGuard()
+             ->deleteAllAccessTokens();
 
-	public function testGetUndefinedAccessToken()
-	{
-		$result = '{
-		  "token_type": "Bearer",
-		  "expires_in": 3600
-		}';
+        $this->expectException('\\MicrosoftTranslator\\Exception');
+        $auth->getAccessToken();
+    }
 
-		/** @var \Mockery\MockInterface|\MicrosoftTranslator\Http $mockHttp */
-		$mockHttp = \Mockery::mock( '\\MicrosoftTranslator\\Http' , array( $this->configuration , new \MicrosoftTranslator\Logger ) )->makePartial();
-		/** @noinspection PhpMethodParametersCountMismatchInspection */
-		$mockHttp->shouldReceive( 'execCurl' )->andReturn( array( $result , 200 , '' , 0 ) );
+    public function testGetUndefinedAccessToken()
+    {
+        $result = false;
 
-		$auth = new \MicrosoftTranslator\Auth( $this->configuration , new \MicrosoftTranslator\Logger , $mockHttp );
-		$auth->getGuard()->deleteAllAccessTokens();
+        /** @var \Mockery\MockInterface|\MicrosoftTranslator\Http $mockHttp */
+        $mockHttp = \Mockery::mock('\\MicrosoftTranslator\\Http', [$this->configuration, new \MicrosoftTranslator\Logger])
+                            ->makePartial();
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        $mockHttp->shouldReceive('execCurl')
+                 ->andReturn([$result, 200, '', 0]);
 
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' , 'Access token not found in response' );
-		$auth->getAccessToken();
-	}
+        $auth = new \MicrosoftTranslator\Auth($this->configuration, new \MicrosoftTranslator\Logger, $mockHttp);
+        $auth->getGuard()
+             ->deleteAllAccessTokens();
 
+        $this->expectException('\\MicrosoftTranslator\\Exception', 'Access token not found in response');
+        $auth->getAccessToken();
+    }
 }

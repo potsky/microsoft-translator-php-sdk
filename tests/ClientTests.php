@@ -4,8 +4,7 @@ class ClientTests extends TestCase
 {
 	protected $configuration = array(
 		'api_base_url'      => 'whatever we are unit testing' ,
-		'api_client_id'     => 'dumb' ,
-		'api_client_secret' => 'dumber' ,
+		'api_client_key'     => 'dumb' ,
 	);
 
 	public function testCreate()
@@ -16,19 +15,19 @@ class ClientTests extends TestCase
 
 	public function testCreateWithIncorrectHttpManager()
 	{
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' , 'HTTP Manager is not an instance of MicrosoftTranslator\HttpInterface' );
+		$this->expectException( '\\MicrosoftTranslator\\Exception' , 'HTTP Manager is not an instance of MicrosoftTranslator\HttpInterface' );
 		new MicrosoftTranslator\Client( $this->configuration , new stdClass() );
 	}
 
 	public function testCreateWithIncorrectAuthManager()
 	{
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' , 'Auth Manager is not an instance of MicrosoftTranslator\AuthInterface' );
+		$this->expectException( '\\MicrosoftTranslator\\Exception' , 'Auth Manager is not an instance of MicrosoftTranslator\AuthInterface' );
 		new MicrosoftTranslator\Client( $this->configuration , null , new stdClass() );
 	}
 
 	public function testCreateWithIncorrectLogger()
 	{
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' , 'Logger Manager is not an instance of MicrosoftTranslator\LoggerInterface' );
+		$this->expectException( '\\MicrosoftTranslator\\Exception' , 'Logger Manager is not an instance of MicrosoftTranslator\LoggerInterface' );
 		new MicrosoftTranslator\Client( $this->configuration , null , null , new stdClass() );
 	}
 
@@ -49,7 +48,7 @@ class ClientTests extends TestCase
 
 	public function testTranslateFail()
 	{
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' );
+		$this->expectException( '\\MicrosoftTranslator\\Exception' );
 		$result   = '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">Fleisch</string>';
 		$this->getClient( $result , 400 )->translate( 'dog' , 'fr' );
 	}
@@ -85,7 +84,7 @@ class ClientTests extends TestCase
 
 	public function testGetLanguageNamesEmpty()
 	{
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' , '$languageCodes array is empty.' );
+		$this->expectException( '\\MicrosoftTranslator\\Exception' , '$languageCodes array is empty.' );
 		/** @noinspection XmlUnusedNamespaceDeclaration */
 		$result = '<ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><string>Anglais</string><string/><string>Français</string></ArrayOfstring>';
 		$this->getClient( $result )->getLanguageNames( 'fr' , array() );
@@ -133,7 +132,7 @@ class ClientTests extends TestCase
 
 	public function testDetectArrayEmpty()
 	{
-		$this->setExpectedException( '\\MicrosoftTranslator\\Exception' , '$texts array is empty.' );
+		$this->expectException( '\\MicrosoftTranslator\\Exception' , '$texts array is empty.' );
 		/** @noinspection XmlUnusedNamespaceDeclaration */
 		$result = '<ArrayOfstring xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><string>en</string><string>fr</string></ArrayOfstring>';
 		$this->getClient( $result )->detectArray( array() );

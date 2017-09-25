@@ -21,7 +21,7 @@ interface GuardInterface
 	 *
 	 * @return bool
 	 */
-	public function storeAccessTokenForSeconds( $access_token , $seconds , array $param = array() );
+	public function storeAccessTokenForSeconds( $access_token , $seconds, array $param = array() );
 
 	/**
 	 * Get a stored Access Token

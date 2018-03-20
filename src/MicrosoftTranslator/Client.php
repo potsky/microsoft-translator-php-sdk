@@ -254,7 +254,7 @@ class Client
     {
         $requestXml = "<TranslateArrayRequest>"."<AppId/>"."<From>$from</From>"."<Options>"."<Category xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\">$category</Category>"."<ContentType xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\">$contentType</ContentType>"."<ReservedFlags xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />"."<State xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />"."<Uri xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />"."<User xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />"."</Options>"."<Texts>";
         foreach ($texts as $text) {
-            $requestXml .= "<string xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\">$text</string>";
+            $requestXml .= "<string xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\"><![CDATA[$text]]></string>";
         }
         $requestXml .= "</Texts>"."<To>$to</To>"."</TranslateArrayRequest>";
 
